@@ -64,7 +64,7 @@ def HOG ( img ):
     return(HogVector)
 
 #################################for testing#####################################
-img = cv2.imread('tests//baby.png',cv2.IMREAD_GRAYSCALE)
+'''img = cv2.imread('tests//baby.png',cv2.IMREAD_GRAYSCALE)
 
 if img is None:
    raise IOError('Unable to load image file')
@@ -75,3 +75,4 @@ print(HogVectorLength)
 print(HogVector)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+'''
