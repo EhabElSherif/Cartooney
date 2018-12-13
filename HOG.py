@@ -71,7 +71,5 @@ if img is None:
 
 HogVector=(HOG(img))
 HogVectorLength=len(HogVector)
-print(HogVectorLength)
-print(HogVector)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
