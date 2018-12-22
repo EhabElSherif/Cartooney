@@ -1,8 +1,5 @@
 import cv2
 import numpy as np
-import skimage.io as io
-from skimage.color import rgb2gray
-import matplotlib.pyplot as plt
 
 #HOG steps:
 #1.  resize the image ##### DONE
@@ -12,7 +9,8 @@ import matplotlib.pyplot as plt
 #5.  calculate the HOG feature vector ##### DONE
 
 def HOG ( img ):
-    img = cv2.cvtColor (img, cv2.COLOR_BGR2GRAY)
+
+    img=cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = cv2.resize(img,(64,64))
     img = np.int64(img)
     Gx = np.zeros(img.shape)        
@@ -45,7 +43,6 @@ def HOG ( img ):
             Cells[x // 8][y // 8] = h
 
     #Construct Blocks with window 16x16
-    #In progress
     Blocks = np.empty((Cells.shape[0] - 1,Cells.shape[1] - 1),dtype=list)
 
     HogVector = []
@@ -55,24 +52,12 @@ def HOG ( img ):
             #normalize the 2x2 cells with this normal
             normal = np.sum(np.sum(Cells[k:k+2,w:w+2] ** 2))
             normal = np.sqrt(normal)
-            h = Cells[k:k+2,w:w+2] / normal
-            #append the values of the histograms vertical and horizontal in one vector "Featue vector"
-            h = np.concatenate(h).ravel()
-            h = np.concatenate(h).ravel()
+            h=np.zeros(36)
+            if(normal != 0):
+                h = Cells[k:k+2,w:w+2] / normal
+                #append the values of the histograms vertical and horizontal in one vector "Featue vector"
+                h = np.concatenate(h).ravel()
+                h = np.concatenate(h).ravel()
             HogVector.extend(h)
     #Next step is to pass the feature vector to SVM to train
     return(HogVector)
-
-#################################for testing#####################################
-'''img = cv2.imread('tests//baby.png',cv2.IMREAD_GRAYSCALE)
-
-if img is None:
-   raise IOError('Unable to load image file')
-
-HogVector=(HOG(img))
-HogVectorLength=len(HogVector)
-print(HogVectorLength)
-print(HogVector)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-'''

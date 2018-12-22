@@ -4,63 +4,56 @@ Created on Tue Dec 11 20:59:27 2018
 
 @author: Dalia
 """
-import numpy as np # linear algebra
+import numpy as np
 import glob
 import os
 import cv2
-#from matplotlib import pyplot as plt
-#from skimage import color
-from HOG import *
-#from skimage.feature import hog
-#from sklearn import svm
-#from sklearn.metrics import classification_report,accuracy_score
+from HOG import HOG
+import pickle
+from sklearn.svm import SVC
 
+TrainingSamples = []
+labels = []
+model = SVC(random_state=22)
 
-samples = []
-labels = []    
-positive_path = "tests/positive/"
-negative_path = "tests/negative/"
+def trainSVM(Dir,Type):
+    if Type !=-1:
+        print("\n\nPositive Training")
+    elif Type ==-1:
+        print("\n\nNegative Training")
 
-# Get positive samples
-for filename in glob.glob(os.path.join(positive_path, '*.jpg')):
-    img = cv2.imread(filename, 1)
-    cv2.imshow('img',img)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    hist = HOG(img)
-    samples.append(hist)
-    labels.append(1)
+    i=0
+    for filename in glob.glob(os.path.join(Dir, '*.jpg')):
+        img = cv2.imread(filename, 1)
+        feature = HOG(img)
+        TrainingSamples.append(feature)
+        labels.append(Type)
+        i+=1
+        if(i%1000==0):
+            if Type !=-1:
+                print(str(i)+" positive images are trained")
+            elif Type ==-1:
+                print(str(i)+" negative images are trained")    
 
-# Get negative samples
-for filename in glob.glob(os.path.join(negative_path, '*.jpg')):
-    img = cv2.imread(filename, 1)
-    hist = HOG(img)
-    samples.append(hist)
-    labels.append(0)
+def takeDataset():
+    Dir=""
+    Dir=input("Enter training data directory: ")
+    while (Dir.lower()!=str("STOP").lower() ):
+        Type=int(input("Enter the type of training data (1 for positive , -1 for negative): "))
+        trainSVM(Dir,Type)
+        print("\n\nTo break the loop and save the model ENTER STOP")
+        Dir=input("Enter training data directory: ")
 
-# Convert objects to Numpy Objects
-samples = np.float32(samples)
-labels = np.array(labels)
+def fitting():
+    model.fit(TrainingSamples,labels)
+    print("GRAAAAAAAATZZZZ!!! Training is completed !!!!")
 
+def saveModel():
+    SVMModelName=input("Enter trained model name in format 'filename.pkl': ")
+    file = open(SVMModelName, "wb")
+    file.write(pickle.dumps(model))
+    file.close()
 
-# Shuffle Samples
-rand = np.random.RandomState(321)
-shuffle = rand.permutation(len(samples))
-samples = samples[shuffle]
-labels = labels[shuffle]    
-
-# Create SVM classifier
-svm = cv2.ml.SVM_create()
-svm.setType(cv2.ml.SVM_C_SVC)
-svm.setKernel(cv2.ml.SVM_RBF) # cv2.ml.SVM_LINEAR
-# svm.setDegree(0.0)
-svm.setGamma(5.383)
-# svm.setCoef0(0.0)
-svm.setC(2.67)
-# svm.setNu(0.0)
-# svm.setP(0.0)
-# svm.setClassWeights(None)
-
-# Train
-svm.train(samples, cv2.ml.ROW_SAMPLE, labels)
-svm.save('svm_data.dat')
+takeDataset()
+fitting()
+saveModel()
