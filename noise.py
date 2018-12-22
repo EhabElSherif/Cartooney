@@ -9,15 +9,8 @@ class Noise:
   
   #apply median filter if image has impulsive nois
   def medianFilter(self):
-    return
+    return sp.median_filter(self.__img)
   
   #apply gaussian filter when image has additive noise
   def Gaussian(self):
     return sp.gaussian_filter(self.__img,5)
-
-img=utilities.io.imread("F:\\Google Drive\\CMP 2020\\3rd Year\\3A\\Image Processing\\Labs\\Lab 1 - STD\\pyramids.jpeg")
-u=utilities.Util(img)
-img=u.grey()
-noise=Noise(img)
-img=noise.Gaussian()
-utilities.io.imshow(img)
