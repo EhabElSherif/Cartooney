@@ -9,6 +9,7 @@ import numpy as np
 #5.  calculate the HOG feature vector ##### DONE
 
 def HOG ( img ):
+
     img=cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     img = cv2.resize(img,(64,64))
     img = np.int64(img)
