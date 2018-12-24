@@ -3,7 +3,7 @@ import cv2
 import os
 from HOG import HOG
 import pickle
-from sklearn.svm import SVC
+#from sklearn.svm import SVC
 import glob
 import time
 
