@@ -53,6 +53,7 @@ def HOG ( img ):
             normal = np.sum(np.sum(Cells[k:k+2,w:w+2] ** 2))
             normal = np.sqrt(normal)
             h=np.zeros(36)
+            # if plain area place zeros in the histogram
             if(normal != 0):
                 h = Cells[k:k+2,w:w+2] / normal
                 #append the values of the histograms vertical and horizontal in one vector "Featue vector"
