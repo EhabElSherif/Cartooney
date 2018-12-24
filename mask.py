@@ -69,23 +69,21 @@ def face_detector (img):
     # Given coordinates to detect face and eyes location from ROI
     for (x, y, w, h) in faces:
         
-        #indecies from 0-32 mask_face 
-        masked= mask(img,x,y,w,h,0,0,32)
+        #indecies from 0-30 mask_face 
+        #indecies from 31-34 mask_eye 
+        masked= mask(img,x,y,w,h,0,0,33)
         
-        #indecies from 33-37 mask_eye
-        masked= mask(img,x,y,w,h,0,0,37)
-        
-        #indecies from 44-47 hat
-        masked= mask(img,x,y,w,h,0,0,47)
+        #indecies from 41-44 hat
+        masked= mask(img,x,y,w,h,0,0,41)
         
         roiN_gray = gray[y: y+h, x: x+w]
        
         nose = nose_classifier.detectMultiScale(roiN_gray,1.5,5)
         
         for (nx, ny, nw, nh) in nose:
-            
-            #indecies from 38-43 beard_moustache
-            masked= mask(img,nx,ny,nw,nh,x,y,43)
+            pass
+            #indecies from 35-40 beard_moustache
+            masked= mask(img,nx,ny,nw,nh,x,y,37)
         
     return masked
 
@@ -102,20 +100,16 @@ def mask(img,nx,ny,nw,nh,x,y,index):
      origHeight, origWidth = mask.shape[:2]
     
      
-     if(index < 33):
-         #add mask face
+     if(index < 35):
+         #add emoj (0-9), mask face(10-20),mask_eye(21-34)
         x1,y1,origW,origH = mask_face(nx,ny,nw,nh)
         
-     elif(index < 38):
-         #add eye mask
-        x1,y1,origW,origH = mask_eye(nx,ny,nw,nh)
-        
-     elif(index < 44):
-          #add moustache
+     elif(index < 41):
+          #add moustache (35-40)
          x1,y1,origW,origH = beard_moustache(nx,ny,nw,nh,x,y,origHeight,origWidth)
          
      else:
-         #add hat on head
+         #add hat on head (41-44)
          x1,y1,origW,origH = hat(nx,ny,nw,nh,origHeight,origWidth)
      
      
@@ -126,8 +120,9 @@ def mask(img,nx,ny,nw,nh,x,y,index):
      roi = img[int(y1): int(y1+origH), int(x1): int(x1+origW)]
 
      print(mask.shape,mask1.shape,mask2.shape,roi.shape,mask_inv.shape)
-     roi_bg = cv2.bitwise_and(roi,roi, mask = mask_inv)
-     roi_fg = cv2.bitwise_and(mask1,mask1 ,mask = mask2)
+     if(mask1.shape == roi.shape):
+         roi_bg = cv2.bitwise_and(roi,roi, mask = mask_inv)
+         roi_fg = cv2.bitwise_and(mask1,mask1 ,mask = mask2)
     
      # join the roi_bg and roi_fg
      dst = cv2.add(roi_bg,roi_fg)
@@ -137,7 +132,7 @@ def mask(img,nx,ny,nw,nh,x,y,index):
      return img
 
 
-#add mask on face 
+#add mask on face , #adding mask on eyes
 def mask_face(x,y,w,h):
     
     origW = w 
@@ -160,14 +155,6 @@ def mask_face(x,y,w,h):
     return x,y,origW,origH
 
 
-#adding mask on eyes
-def mask_eye(x,y,w,h):
-    
-    origW = w 
-    origH = h
-    
-    return x,y,origW,origH
-    
 
 #adding moustache/beard
 def beard_moustache(nx,ny,nw,nh,x,y,mh,mw):
@@ -227,7 +214,7 @@ arr = read_masks()
 #print(len(arr))
 masks = read_masks()
 
-img=cv2.imread('tests/twins.jpg')
+img=cv2.imread('tests/positive/twins.jpg')
 
 if img is None:
    raise IOError('Unable to load image file')
