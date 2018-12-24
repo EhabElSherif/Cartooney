@@ -99,7 +99,6 @@ def mask(img,nx,ny,nw,nh,x,y,index):
      mask = mask[:,:,0:3]
      origHeight, origWidth = mask.shape[:2]
     
-     
      if(index < 35):
          #add emoj (0-9), mask face(10-20),mask_eye(21-34)
         x1,y1,origW,origH = mask_face(nx,ny,nw,nh)
