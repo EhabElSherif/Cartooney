@@ -9,6 +9,7 @@ import numpy as np
 import cv2
 import glob
 import os
+from faceDetection import faceDetector
 global masks
 
 def read_masks():
@@ -218,7 +219,7 @@ img=cv2.imread('tests/positive/twins.jpg')
 if img is None:
    raise IOError('Unable to load image file')
 
-image = face_detector(img)
+faces,noses = faceDetector(img)
 
 cv2.imwrite("masked.png",image)
 

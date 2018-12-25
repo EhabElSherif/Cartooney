@@ -18,32 +18,22 @@ def validBox ( Boxes,p0,p1 ):
 
 # Trained faces model
 FaceModelFilename = 'faces.pkl'
-while(FaceModelFilename == ""):
-    FaceModelFilename = input("Enter face trained model file name in format 'filename.pkl': ")
 
 # Trained nose model
 NoseModelFilename = 'noses.pkl'
-while(NoseModelFilename == ""):
-    NoseModelFilename = input("Enter eye_mouth_nose trained model file name in format 'filename.pkl': ")
 
 FaceModel = pickle.load(open(FaceModelFilename, 'rb'))
 NoseModel = pickle.load(open(NoseModelFilename, 'rb'))
 
-print("\n\n-------------------------------------Testing-------------------------------------") 
+def faceDetector():
 
-ImageDir = input("Enter the test image directory: ") #E:\CMP\Projects\Third Year\Cartooney\Cartooney\tests\positive\images (3).jpg
-while ImageDir != "stop":
-    
     # Used for NMS
     BoxesFace = []
     BoxesNose = []
     img = cv2.imread(ImageDir, 1)
     if img is None:
         print("Invalid directory !!")
-        ImageDir = input("Enter the test image directory: ")
-        continue
-    BreakDetection = False
-
+        raise IOError('Unable to load image file')
     
     # Resize too large images to speed up the detection process
     while (img.shape[0] > 720):
@@ -73,9 +63,9 @@ while ImageDir != "stop":
         StepSizeFace = max(1,int(np.ceil(0.2 * min(winSizeFace[1],winSizeFace[0]))))
 
         yf = 0
-        while not BreakDetection and yf + winSizeFace[0] <= img.shape[0]:
+        while yf + winSizeFace[0] <= img.shape[0]:
             xf = 0
-            while not BreakDetection and xf + winSizeFace[1] <= img.shape[1]:
+            while xf + winSizeFace[1] <= img.shape[1]:
 
                 # To show the sliding window
                 TempImageFace = np.copy(img)
@@ -83,9 +73,6 @@ while ImageDir != "stop":
                 cv2.imshow('window',TempImageFace)
                 cv2.waitKey(1)
                 time.sleep(0.0025)
-                #if keyboard.is_pressed('space'):
-                #    BreakDetection = True
-                #    break
 
                 # Get the HOG vector of current window
                 CroppedImage = img[yf:yf + winSizeFace[0],xf:xf + winSizeFace[1]]
@@ -108,16 +95,16 @@ while ImageDir != "stop":
                     
                     # Loop untill the current window size smaller then the
                     # limit
-                    while (not BreakDetection) and (not NoseFound) and winSizeNose < maxWinSizeNose:
+                    while (not NoseFound) and winSizeNose < maxWinSizeNose:
 
                         # Calculate the step size of the sliding window depends
                         # on current window size
                         StepSizeNose = max(1,int(np.ceil(0.7 * min(winSizeNose[0],winSizeNose[1]))))
 
                         yn = yf
-                        while (not BreakDetection) and (not NoseFound) and yn + winSizeNose[0] <= yf + winSizeFace[0]:
+                        while (not NoseFound) and yn + winSizeNose[0] <= yf + winSizeFace[0]:
                             xn = xf
-                            while (not NoseFound) and xn + winSizeNose[1] <= xf + winSizeFace[1]:
+                            while xn + winSizeNose[1] <= xf + winSizeFace[1]:
                                 
                                 # To show the sliding window
                                 TempImageNose = np.copy(TempImageFace)
@@ -126,10 +113,6 @@ while ImageDir != "stop":
                                 cv2.waitKey(1)
                                 time.sleep(0.0025)
 
-                                #if keyboard.is_pressed('space'):
-                                #    BreakDetection = True
-                                #    break
-                                
                                 # Get HOG vector of the current window of nose
                                 CroppedNose = img[yn:yn + winSizeNose[0],xn:xn + winSizeNose[1]]
                                 featureNose = HOG(CroppedNose)
@@ -150,6 +133,4 @@ while ImageDir != "stop":
         
         winSizeFace = (int(np.ceil(0.75 * winSizeFace[0])),int(np.ceil(0.75 * winSizeFace[1])))
 
-    cv2.imshow('face',img)
-    cv2.waitKey(0)
-    ImageDir = input("Enter the test image directory: ")
+    return BoxesFace,BoxesNose
