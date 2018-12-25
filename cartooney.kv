@@ -1,0 +1,200 @@
+#:import NoTransition kivy.uix.screenmanager.NoTransition
+#:import SwapTransition kivy.uix.screenmanager.SwapTransition
+
+
+ScreenManage:
+    transition: NoTransition()
+    WelcomeScreen:
+    MainScreen:
+    CartoonScreen:
+    MaskScreen:
+    EffectScreen:
+    
+    
+<WelcomeScreen>:
+    name: "welcome"
+    padding: 50
+    canvas.before:
+        Rectangle:
+            source: "welScreen.png"
+            size: self.size
+   
+    BoxLayout:
+        padding: 80
+        spacing: 
+        Label:
+        Button:
+            size_hint: .8, .2
+            pos_hint: {"x": .5, "top": .4}
+            text: "Let's Go"
+            font_size: 36
+            font_name: "Bigfish"
+            color: 1, 1, 1, 1  
+            background_normal: "gbutton.png"
+            on_press: root.manager.current = "main"
+        Label:
+            
+<MainScreen>:
+    name: "main"
+    GridLayout:
+        rows: 3
+        BoxLayout:
+            padding: 5
+            size_hint: 1, .15
+            Button:
+                size_hint: .3, 1
+                text: "Back"
+                font_name: "Bigfish"
+                background_normal: "arrow.png"
+                on_press: root.manager.current = "welcome"
+            Button:
+                size_hint: .3, 1
+                text: 'Load'
+                font_name: "Bigfish"
+                background_normal: "folder.png"
+                on_release: root.loadButton()
+            Button:
+                size_hint: .3, 1
+                text: 'Save'
+                font_name: "Bigfish"
+                background_normal: "folder.png"
+            Button:
+                size_hint: .3, 1
+                text: 'Cartoonize'
+                font_name: "Bigfish"
+                background_normal: "label.png"
+                on_press: root.manager.current = "cartoon"
+            Button:
+                size_hint: .3, 1
+                text: 'Masks'
+                font_name: "Bigfish"
+                background_normal: "label.png"
+                on_press: root.manager.current = "mask"
+            Button:
+                size_hint: .3, 1
+                text: 'Effects'
+                font_name: "Bigfish"
+                background_normal: "label.png"
+                on_press: root.manager.current = "effect"
+            Label:
+        BoxLayout:
+            id: disp
+            Image:
+                id: img
+                source: ""
+
+<CartoonScreen>:
+    name: "cartoon"
+    GridLayout:
+        rows: 2
+        BoxLayout:
+            padding: 5
+            size_hint: 1, .1
+            Button:
+                size_hint: .3, 1
+                text: "Back"
+                font_name: "Bigfish"
+                background_normal: "arrow.png"
+                on_press: root.manager.current = "main"
+            Label:
+        BoxLayout:
+
+
+<MaskScreen>:
+    name: "mask"
+    GridLayout:
+        rows: 2
+        BoxLayout:
+            padding: 5
+            size_hint: 1, .1
+            Button:
+                size_hint: .3, 1
+                text: "Back"
+                font_name: "Bigfish"
+                background_normal: "arrow.png"
+                on_press: root.manager.current = "main"
+            Label:
+        BoxLayout:
+
+
+<EffectScreen>:
+    GridLayout:
+        rows: 2
+        BoxLayout:
+            padding: 5
+            size_hint: 1, .1
+            Button:
+                size_hint: .3, 1
+                text: "Back"
+                font_name: "Bigfish"
+                background_normal: "arrow.png"
+                on_press: root.manager.current = "main"
+            Label:
+        BoxLayout:
+
+<CustPopup>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: 'vertical'
+        canvas.before:
+            Color:
+                rgb: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        FileChooserListView:
+            id: filechooser
+            rootpath: '/Users/Haneen/'
+        BoxLayout:
+            size_hint: 1, .1
+            orientation: 'horizontal'
+            Button:
+                id: cancel
+                text: 'Cancel'
+                on_press: root.cancel()
+                background_normal: "obutton.png"
+            Button:
+                id: choose
+                text: 'Choose'
+                on_press: root.choose()
+                background_normal: "obutton.png"
+ 
+<FileChooserListView>:
+    layout: layout
+    FileChooserListLayout:
+        id: layout
+        controller: root
+
+[FileListEntry@FloatLayout+TreeViewNode]:
+    locked: False
+    entries: []
+    path: ctx.path
+    is_selected: self.path in ctx.controller().selection
+
+    orientation: 'horizontal'
+    size_hint_y: root.y
+    height: '48dp' if dp(1) > 1 else '24dp'
+    is_leaf: not ctx.isdir or ctx.name.endswith('..' + ctx.sep) or self.locked
+    on_touch_down: self.collide_point(*args[1].pos) and ctx.controller().entry_touched(self, args[1])
+    on_touch_up: self.collide_point(*args[1].pos) and ctx.controller().entry_released(self, args[1])
+    BoxLayout:
+        pos: root.pos
+        size_hint_x: None
+        width: root.width - dp(10)
+        Label:
+            color: 0, 0, 0, 1
+            id: filename
+            text_size: self.width, None
+            halign: 'left'
+            shorten: True
+            text: ctx.name
+        Label:
+            # --------------
+            # CHANGE FONT COLOR
+            # --------------
+            color: 0, 0, 0, 1
+            text_size: self.width, None
+            size_hint_x: None
+            halign: 'right'
+            text: '{}'.format(ctx.get_nice_size())
