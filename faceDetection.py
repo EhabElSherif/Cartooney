@@ -8,7 +8,7 @@ import time
 # Check duplicated boxes inside each other
 def validBox ( Boxes,p0,p1 ):
     for box in Boxes:
-        if(p0[0] >= box[0] and p0[1] >= box[1] and p1[0] <= box[2] and p1[1] <= box[3]):
+        if(p0[0] >= box[0] and p0[1] >= box[1] and p1[0] <= box[0]+box[2] and p1[1] <= box[1]+box[3]):
             return False
     return True
 
@@ -78,14 +78,14 @@ def faceDetector(img):
                 # face
                 if FaceModel.predict([feature]) == 1 and (len(BoxesFace) == 0 or validBox(BoxesFace,(xf,yf),(xf + winSizeFace[1],yf + winSizeFace[0]))) :
 
-                    BoxesFace.append([xf,yf,xf + winSizeFace[1],yf + winSizeFace[0]])
-                    cv2.rectangle(img,(xf,yf),(xf + winSizeFace[1],yf + winSizeFace[0]),(0,255,0),2)
+                    BoxesFace.append([xf,yf,winSizeFace[1],winSizeFace[0]])
+                    # cv2.rectangle(img,(xf,yf),(xf + winSizeFace[1],yf + winSizeFace[0]),(0,255,0),2)
 
                     # Nose detection
                     # Max size for window to detect nose depends on the face
                     # window size
                     maxWinSizeNose = (int(np.ceil(0.5 * winSizeFace[0])),int(np.ceil(0.3 * winSizeFace[1])))
-                    winSizeNose = max((1,1),(int(np.ceil(0.2 * winSizeFace[0])),int(np.ceil(0.15 * winSizeFace[1]))))
+                    winSizeNose = max((1,1),(int(np.ceil(0.25 * winSizeFace[0])),int(np.ceil(0.15 * winSizeFace[1]))))
                     
                     NoseFound = False
                     
@@ -95,7 +95,7 @@ def faceDetector(img):
 
                         # Calculate the step size of the sliding window depends
                         # on current window size
-                        StepSizeNose = max(1,int(np.ceil(0.7 * min(winSizeNose[0],winSizeNose[1]))))
+                        StepSizeNose = max(1,int(np.ceil(0.5 * min(winSizeNose[0],winSizeNose[1]))))
 
                         yn = yf
                         while (not NoseFound) and yn + winSizeNose[0] <= yf + winSizeFace[0]:
@@ -115,7 +115,7 @@ def faceDetector(img):
                                 
                                 # If the current window is nose
                                 if(NoseModel.predict([featureNose]) == 1):
-                                    BoxesNose.append([xn,yn,xn + winSizeNose[1],yn + winSizeNose[0],xf,yf])
+                                    BoxesNose.append([xn,yn,winSizeNose[1],winSizeNose[0],xf,yf])
                                     cv2.rectangle(img,(xn,yn),(xn + winSizeNose[1],yn + winSizeNose[0]),(255,100,0),1)
                                     NoseFound = True
 
