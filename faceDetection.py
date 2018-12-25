@@ -25,15 +25,11 @@ NoseModelFilename = 'noses.pkl'
 FaceModel = pickle.load(open(FaceModelFilename, 'rb'))
 NoseModel = pickle.load(open(NoseModelFilename, 'rb'))
 
-def faceDetector():
+def faceDetector(img):
 
     # Used for NMS
     BoxesFace = []
     BoxesNose = []
-    img = cv2.imread(ImageDir, 1)
-    if img is None:
-        print("Invalid directory !!")
-        raise IOError('Unable to load image file')
     
     # Resize too large images to speed up the detection process
     while (img.shape[0] > 720):
@@ -55,7 +51,7 @@ def faceDetector():
     print("Minimum window size for face",minWinSizeFace)
 
     # Loop untill the current window size smaller then the limit
-    while not BreakDetection and winSizeFace >= minWinSizeFace:
+    while winSizeFace >= minWinSizeFace:
         print("Current window size for face",winSizeFace)
 
         # Calculate the step size of the sliding window depends on current
@@ -89,7 +85,7 @@ def faceDetector():
                     # Max size for window to detect nose depends on the face
                     # window size
                     maxWinSizeNose = (int(np.ceil(0.5 * winSizeFace[0])),int(np.ceil(0.3 * winSizeFace[1])))
-                    winSizeNose = max((1,1),(int(np.ceil(0.3 * winSizeFace[0])),int(np.ceil(0.2 * winSizeFace[1]))))
+                    winSizeNose = max((1,1),(int(np.ceil(0.2 * winSizeFace[0])),int(np.ceil(0.15 * winSizeFace[1]))))
                     
                     NoseFound = False
                     
@@ -119,7 +115,7 @@ def faceDetector():
                                 
                                 # If the current window is nose
                                 if(NoseModel.predict([featureNose]) == 1):
-                                    BoxesNose.append([xn,yn,xn + winSizeNose[1],yn + winSizeNose[0]])
+                                    BoxesNose.append([xn,yn,xn + winSizeNose[1],yn + winSizeNose[0],xf,yf])
                                     cv2.rectangle(img,(xn,yn),(xn + winSizeNose[1],yn + winSizeNose[0]),(255,100,0),1)
                                     NoseFound = True
 

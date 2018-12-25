@@ -118,15 +118,17 @@ def mask(img,nx,ny,nw,nh,x,y,index):
      mask_inv = cv2.resize(orig_mask_inv,(origW,origH),interpolation = cv2.INTER_AREA)
 
      roi = img[int(y1): int(y1+origH), int(x1): int(x1+origW)]
+     roi = cv2.resize(roi,(origW,origH),interpolation = cv2.INTER_AREA)
 
      print(mask.shape,mask1.shape,mask2.shape,roi.shape,mask_inv.shape)
-     if(mask1.shape == roi.shape):
-         roi_bg = cv2.bitwise_and(roi,roi, mask = mask_inv)
-         roi_fg = cv2.bitwise_and(mask1,mask1 ,mask = mask2)
+     #if(mask1.shape == roi.shape):
+     roi_bg = cv2.bitwise_and(roi,roi, mask = mask_inv)
+     roi_fg = cv2.bitwise_and(mask1,mask1 ,mask = mask2)
     
      # join the roi_bg and roi_fg
      dst = cv2.add(roi_bg,roi_fg)
-    
+     dst = cv2.resize(dst,(origW,origH),interpolation = cv2.INTER_AREA)
+
      img[int(y1): int(y1+origH), int(x1): int(x1+origW)] = dst
     
      return img
@@ -211,17 +213,27 @@ def hat(x,y,w,h,mh,mw):
 
 global masks
 arr = read_masks()
-#print(len(arr))
 masks = read_masks()
 
-img=cv2.imread('tests/positive/twins.jpg')
+img=cv2.imread('tests/positive/images (55).jpg')
 
 if img is None:
    raise IOError('Unable to load image file')
 
 faces,noses = faceDetector(img)
 
-cv2.imwrite("masked.png",image)
+for (x,y,w,h) in faces:
+
+    masked= mask(img,x,y,w,h,0,0,33)
+        
+    #indecies from 41-44 hat
+    # masked= mask(img,x,y,w,h,0,0,41)
+
+for (xn,yn,wn,hn,x,y) in noses:
+
+    masked= mask(img,x,y,w,h,x,y,37)
+
+cv2.imwrite("masked.png",masked)
 
 cv2.imshow('img',image)
 cv2.waitKey(0)
