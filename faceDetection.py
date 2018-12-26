@@ -32,10 +32,10 @@ def faceDetector(img):
     BoxesNose = []
     
     # Resize too large images to speed up the detection process
-    while (img.shape[0] > 720):
-        img = cv2.resize(img,(int(np.ceil(0.8 * img.shape[1])),720))
-    while (img.shape[1] > 720):
-        img = cv2.resize(img,(720,int(np.ceil(0.8 * img.shape[0]))))
+    while (img.shape[0] > 360):
+        img = cv2.resize(img,(int(np.ceil(0.8 * img.shape[1])),int(np.ceil(0.8 * img.shape[0]))))
+    while (img.shape[1] > 360):
+        img = cv2.resize(img,(int(np.ceil(0.8 * img.shape[1])),int(np.ceil(0.8 * img.shape[0]))))
 
     # Face detection
     # decide the window size for face detection depends on the smaller
@@ -48,11 +48,11 @@ def faceDetector(img):
         minWinSizeFace= max((32,32),(int(np.ceil(0.1*img.shape[1])),int(np.ceil(0.1*img.shape[1]))))
         winSizeFace = (img.shape[1],img.shape[1])
         
-    print("Minimum window size for face",minWinSizeFace)
+    #print("Minimum window size for face",minWinSizeFace)
 
     # Loop untill the current window size smaller then the limit
     while winSizeFace >= minWinSizeFace:
-        print("Current window size for face",winSizeFace)
+        #print("Current window size for face",winSizeFace)
 
         # Calculate the step size of the sliding window depends on current
         # window size
@@ -128,5 +128,5 @@ def faceDetector(img):
             yf+=StepSizeFace
         
         winSizeFace = (int(np.ceil(0.75 * winSizeFace[0])),int(np.ceil(0.75 * winSizeFace[1])))
-
-    return BoxesFace,BoxesNose
+    cv2.destroyAllWindows()
+    return BoxesFace,BoxesNose,img

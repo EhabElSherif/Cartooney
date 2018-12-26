@@ -209,36 +209,54 @@ def hat ( x,y,w,h,mh,mw ):
     
     return x1,y1,hatW,hatH
 
+def masks(img,index,faces,noses):
+    global masks
+    masks = read_masks()
+#    FN=faceDetector(img)
+#    faces=FN[0]
+#    noses=FN[1]
+    if(index < 35 or index >= 41):
+         #add emoj (0-9), mask face(10-20),mask_eye(21-34)
+         for (x,y,w,h) in faces:
+            masked = mask(img,x,y,w,h,0,0,index)
+            
+    elif(index < 41):
+          #add moustache (35-40)
+         for (xn,yn,wn,hn,x,y) in noses:
+            masked = mask(img,xn,yn,wn,hn,x,y,37)
+    
+
+    return masked
 
 ##############################################################################
-    
-global masks
-arr = read_masks()
-masks = read_masks()
 
-img = cv2.imread('tests/positive/images (3).jpg')
-
-if img is None:
-   raise IOError('Unable to load image file')
-
-faces,noses = faceDetector(img)
-
-for (x,y,w,h) in faces:
-
-    masked = mask(img,x,y,w,h,0,0,31)
-        
-    #indecies from 41-44 hat
-    masked = mask(img,x,y,w,h,0,0,41)
-
-for (xn,yn,wn,hn,x,y) in noses:
-
-    masked = mask(img,xn,yn,wn,hn,x,y,37)
-
-cv2.imwrite("masked.png",masked)
-
-cv2.imshow('img',masked)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+#global masks
+#arr = read_masks()
+#masks = read_masks()
+#
+#img = cv2.imread('tests/positive/images (3).jpg')
+#
+#if img is None:
+#   raise IOError('Unable to load image file')
+#
+#faces,noses = faceDetector(img)
+#
+#for (x,y,w,h) in faces:
+#
+#    masked = mask(img,x,y,w,h,0,0,31)
+#        
+#    #indecies from 41-44 hat
+#    masked = mask(img,x,y,w,h,0,0,41)
+#
+#for (xn,yn,wn,hn,x,y) in noses:
+#
+#    masked = mask(img,xn,yn,wn,hn,x,y,37)
+#
+#cv2.imwrite("masked.png",masked)
+#
+#cv2.imshow('img',masked)
+#cv2.waitKey(0)
+#cv2.destroyAllWindows()
         
         
         

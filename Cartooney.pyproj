@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d960fb07-d01d-4300-8a94-fab1cf70419b</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>HOG.py</StartupFile>
+    <StartupFile>mask.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -31,7 +31,10 @@
     <Compile Include="HOG.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="main.py" />
+    <Compile Include="mask.py" />
     <Compile Include="noise.py" />
+    <Compile Include="SVM.py" />
     <Compile Include="utilities.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
